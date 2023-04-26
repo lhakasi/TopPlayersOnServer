@@ -38,6 +38,8 @@ namespace TopPlayersOnServer
     {
         private List<Player> _players;
 
+        private int _amountOfTopPlayers = 3;
+
         public Server()
         {
             _players = new List<Player>()
@@ -57,6 +59,12 @@ namespace TopPlayersOnServer
 
         public List<Player> GetPlayers() => 
             new List<Player>(_players);
+
+        public List<Player> SortByLevel() =>
+            _players.OrderByDescending(player => player.Level).Take(_amountOfTopPlayers).ToList();
+
+        public List<Player> SortByStrength() =>
+            _players.OrderByDescending(player => player.Strength).Take(_amountOfTopPlayers).ToList();
     }
 
     class Terminal
@@ -68,38 +76,27 @@ namespace TopPlayersOnServer
             Console.WriteLine("Сервер: \"Let's waste time!\"");
             Console.WriteLine("\nТоп 3 игроков по уровню:");
             
-            ShowTopPlayers(SortByLevel());
+            ShowPlayers(_server.SortByLevel());
 
             Console.WriteLine("Топ 3 игроков по силе:");
             
-            ShowTopPlayers(SortByStrength());
-            ShowAllPlayers();            
-        }
+            ShowPlayers(_server.SortByStrength());
 
-        private List<Player> SortByLevel() =>
-            _server.GetPlayers().OrderByDescending(player => player.Level).Take(3).ToList();
+            Console.WriteLine("Список всех игроков:");
 
-        private List<Player> SortByStrength() =>
-            _server.GetPlayers().OrderByDescending(player => player.Strength).Take(3).ToList();
-        
-        private void ShowTopPlayers(List<Player> filteredPlayers)
-        {
-            Console.WriteLine();
-
-            foreach (Player player in filteredPlayers)
-                player.ShowInfo();
-
-            Console.WriteLine();
-        }
-
-        private void ShowAllPlayers()
-        {
-           Console.WriteLine("Список всех игроков:\n");
-
-            foreach (Player player in _server.GetPlayers())
-                player.ShowInfo();
+            ShowPlayers(_server.GetPlayers());
 
             Console.ReadKey();
+        }
+                
+        private void ShowPlayers(List<Player> players)
+        {
+            Console.WriteLine();
+
+            foreach (Player player in players)
+                player.ShowInfo();
+
+            Console.WriteLine();
         }
     }
 }
